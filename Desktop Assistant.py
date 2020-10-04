@@ -1,225 +1,312 @@
-import pyttsx3 #pip install pyttsx3
-import speech_recognition as sr #pip install speechRecognition
+import pyttsx3  # pip install pyttsx3
+import speech_recognition as sr  # pip install speechRecognition
 import datetime
-import wikipedia #pip install wikipedia
+import time
+import json
+import requests
+import subprocess
+import wikipedia  # pip install wikipedia
 import webbrowser
+import wolframalpha
 import os
+import math
+import sys
+import pyautogui
 import smtplib
-import random
+import urllib
+from bs4 import BeautifulSoup
+from googlesearch import search
+from selenium import webdriver
 
-engine = pyttsx3.init('sapi5')
-voices = engine.getProperty('voices')
-# print(voices[0].id)
-engine.setProperty('voice', voices[1].id)
+engine = pyttsx3.init("sapi5")
+voices = engine.getProperty("voices")
+# To check which voice is installed in pc use the following command:
+# print(voices[1].id)
+engine.setProperty("voice", voices[0].id)
 
 
+# define speak fuction:
 def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
 
+# NOTICE:
+print("make sure you are connected to the internet!")
+
+
+# Define wishme function that uses present time to greet you
 def wishMe():
     hour = int(datetime.datetime.now().hour)
-    if hour>=0 and hour<12:
-        speak("Good Morning! ")
+    if hour >= 0 and hour < 12:
+        speak("Good Morning!")
 
-    elif hour>=12 and hour<17:
-        speak("Good Afternoon! ")
-
-    elif hour>=17 and hour<19 :
-        speak("Good Evening! ")
+    elif hour >= 12 and hour < 18:
+        speak("Good Afternoon!")
 
     else:
-        speak("Good Night! ")
+        speak("Good Evening!")
 
-    speak("I am your  Vertual  Assistant Suzi. Please tell me how may I help you")
+    speak("I am coodie Sir. Please tell me how may I help you")
+
+
+# def search_web(query):
+
+#     driver = webdriver.Firefox() 
+#     driver.implicitly_wait(1) 
+#     driver.maximize_window() 
 
 def takeCommand():
-    #It takes microphone input from the user and returns string output
+    # It takes microphone input from the user and returns string output
 
-    rr = sr.Recognizer()
+    r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        rr.pause_threshold = 1
-        audio = rr.listen(source)
+        r.pause_threshold = 1
+        audio = r.listen(source)
 
     try:
         print("Recognizing...")
-        query = rr.recognize_google(audio, language='en-in')
-        print(f"User said: {query}\n")
+        query = r.recognize_google(audio, language="en-in")
+        print(f
+        "User said: {query}\n")
 
-    except Exception as e:
-        # print(e)
+        except Exception as e:
+        print(e)
         print("Say that again please...")
-        speak("Connection error")
         return "None"
     return query
 
+
 def sendEmail(to, content):
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server = smtplib.SMTP("smtp.gmail.com", 587)
     server.ehlo()
     server.starttls()
-    server.login('youremail@gmail.com', 'your-password')
-    server.sendmail('youremail@gmail.com', to, content)
+    server.login("akshat.unt@gmail.com", "yes@akshat")
+    server.sendmail("akshat.unt@gmail.com", to, content)
     server.close()
+
 
 if __name__ == "__main__":
     wishMe()
     while True:
-    # if 1:
+        # if 1:
         query = takeCommand().lower()
 
         # Logic for executing tasks based on query
-        if 'wikipedia' in query:
-            speak('Searching Wikipedia...')
+        if "wikipedia" in query:
+            speak("Searching Wikipedia...")
             query = query.replace("wikipedia", "")
             results = wikipedia.summary(query, sentences=2)
             speak("According to Wikipedia")
             print(results)
             speak(results)
 
-        elif "hello" in query or "hello Suzi" in query:
-            hello1 = "Hello ! How May i Help you.."
-            print(hello1)
-            speak(hello1)
+        elif "play videos" in query:
+            video_dir = "C:\\Users\\Guest 2_2\\Videos\\y2mate.com - Doraemon AMV __ Get Ready To Fight__ AVM Factory_chYl54Q_z0M_360p.mp4"
+            video = os.listdir(video_dir)
+            speak("playing your videos")
+            print(video)
+            os.startfile(os.path.join(video_dir, video[0]))
 
-        elif "who are you" in query or "about you" in query or "your details" in query:
-            who_are_you = "I am Suzi an A I based computer program but i can help you lot like a your assistant ! try me to give simple command !"
-            print(who_are_you)
-            speak(who_are_you)
-
-        elif 'who make you' in query or 'who made you' in query or 'who created you' in query or 'who develop you' in query:
-            speak(" For your information Prasun Roy Created me !    I can show you his Linked In profile if you want to see.    Yes or no .....")
-            ans_from_user_who_made_you = takeCommand()
-            if 'yes' in ans_from_user_who_made_you or 'ok' in ans_from_user_who_made_you or 'yeah' in ans_from_user_who_made_you:
-                webbrowser.open("https://www.linkedin.com/in/prasun-roy-")
-                speak('opening his profile...... please wait')
-
-            elif 'no' in ans_from_user_who_made_you or 'no thanks' in ans_from_user_who_made_you or 'not' in ans_from_user_who_made_you:
-                speak("All right ! OK...")
-            else :
-                speak("I can't understand. Please say that again !")
-
-        elif 'open youtube' in query:
-            webbrowser.open("www.youtube.com")
+        elif "open avm factory" in query:
             speak("opening youtube")
+            webbrowser.open("https://www.youtube.com/channel/UCrUSrxPz80KKD675XBFemcA")
 
-        elif 'open github' in query:
-            webbrowser.open("https://www.github.com")
-            speak("opening github")
+        elif "open youtube" in query:
+            speak("opening youtube")
+            webbrowser.open("youtube.com")
 
-        elif 'open facebook' in query:
-            webbrowser.open("https://www.facebook.com")
-            speak("opening facebook")
-
-        elif 'open instagram' in query:
-            webbrowser.open("https://www.instagram.com")
-            speak("opening instagram")   
-
-        elif 'open google' in query:
-            webbrowser.open("google.com")
+        elif "open google" in query:
             speak("opening google")
+            webbrowser.open("google.com")
 
-        elif 'open stackoverflow' in query:
-            webbrowser.open("stackoverflow.com")
+        elif "open stackoverflow" in query:
             speak("opening stackoverflow")
+            webbrowser.open("stackoverflow.com")
 
-        elif 'open yahoo' in query:
-            webbrowser.open("https://www.yahoo.com")
-            speak("opening yahoo")
-            
-        elif 'open gmail' in query:
-            webbrowser.open("https://mail.google.com")
-            speak("opening google mail") 
-            
-        elif 'open snapdeal' in query:
-            webbrowser.open("https://www.snapdeal.com") 
-            speak("opening snapdeal")  
-             
-        elif 'open amazon' in query or 'shop online' in query:
-            webbrowser.open("https://www.amazon.com")
-            speak("opening amazon")
-
-        elif 'open flipkart' in query:
-            webbrowser.open("https://www.flipkart.com")
-            speak("opening flipkart")
-
-        elif 'play music' in query:
-            speak("ok i am playing music")
-            music_dir = 'E:\\My MUSIC'
+        elif "play music" in query:
+            music_dir = "C:\\Users\\Guest 2_2\\Music\\Playlists"
             songs = os.listdir(music_dir)
             print(songs)
             os.startfile(os.path.join(music_dir, songs[0]))
 
-        elif 'video from pc' in query or "video" in query:
-            speak("ok i am playing videos")
-            video_dir = 'E:\\\My Videos'
-            Videos = os.listdir(video_dir)
-            print(Videos)
-            os.startfile(os.path.join(video_dir,Videos[0]))
-
-        elif 'good bye' in query:
-            speak("good bye")
-            exit()
-
-        elif "shutdown" in query:
-            speak("shutting down")
-            os.system('shutdown -s')
-
-        elif "your name" in query or "sweat name" in query:
-            naa_mme = "Thanks for Asking my self ! Suzi"
-            print(naa_mme)
-            speak(naa_mme)
-
-        elif "you feeling" in query:
-            print("feeling Very happy to help you")
-            speak("feeling Very happy to help you")
-
-        elif query == 'none':
-            continue
-
-        elif 'exit' in query or 'stop' in query or 'quit' in query :
-            exx_exit = 'See you soon. Bye'
-            speak(exx_exit)
-            exit() 
-
-        elif 'the time' in query:
+        elif "the time" in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
-            speak(f"the time is {strTime}")
+            speak(f
+            "Sir, the time is {strTime}")
 
-        elif 'open code' in query:
-            codePath = "D:\\vs\\Microsoft VS Code\\Code.exe"
+            elif "rediffmail" in query:
+            speak("opening rediff mail")
+            webbrowser.open("mail.rediff.com")
+
+        elif "open code" in query:
+            codePath = "C:\\Users\\Guest 2_2\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
             os.startfile(codePath)
-            speak("opening visual studio code")
 
-        elif 'email to prasun' in query:
+        elif "what is your name" in query:
+            speak("My name is Coodie")
+
+        elif "jyoti home kitchen" in query:
+            speak("opening youtube")
+            webbrowser.open("https://www.youtube.com/channel/UCC3H7SaDg-MWA6fJTONUk2g")
+
+        elif "who is your idle" in query:
+            speak("my idle is my manufacturer, i mean Akshat")
+
+        elif "hello" in query:
+            speak("hey there")
+            print("hi!")
+
+        elif "thank you" in query:
+            speak("welcome, Quitting sir!")
+            quit()
+
+        elif "email to akshat" in query:
             try:
                 speak("What should I say?")
                 content = takeCommand()
-                to = "prasunroy988@gmail.com"
+                to = "akshatkumarsingh5@gmail.com"
                 sendEmail(to, content)
                 speak("Email has been sent!")
             except Exception as e:
                 print(e)
-                speak("Sorry.... I am not able to send this email")
+                speak("Sorry my friend Akshat. I am not able to send this email")
+
+        elif "connect to class" in query:
+            speak("Connecting to zoom!")
+            meetpath = "G:\\Program files\\Python\\zoom\\zoom.py"
+            os.startfile(meetpath)
+            quit()
+
+        elif "hcf" in query:
+            num1 = int(input("Enter the First number:\n"))
+            num2 = int(input("Enter the Second number:\n"))
+
+            if num2 > num1:
+                mn = num1
+
+            else:
+                mn = num2
+
+            for i in range(1, mn + 1):
+                if num1 % i == 0 and num2 % i == 0:
+                    hcf = i
+
+            print(f
+            "The HCF of these two numbers is {hcf}")
+            speak("The hcf of {num1} and {num2} is {hcf}")
+
+        elif 'search' in query:
+            query = query.replace("search", "")
+            webbrowser.open_new_tab(query)
+            time.sleep(5)
+
+        elif "weather" in query:
+            api_key = "a0bfb859d9737f01f4e9d1606e26ec9a"
+            base_url = "https://api.openweathermap.org/data/2.5/weather?"
+            speak("what is the city name")
+            city_name = takeCommand()
+            complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+            response = requests.get(complete_url)
+            x = response.json()
+            if x["cod"] != "404":
+                y = x["main"]
+                current_temperature = y["temp"]
+                current_humidiy = y["humidity"]
+                z = x["weather"]
+                weather_description = z[0]["description"]
+                speak(" Temperature in kelvin unit is " +
+                      str(current_temperature) +
+                      "\n humidity in percentage is " +
+                      str(current_humidiy) +
+                      "\n description  " +
+                      str(weather_description))
+                print(" Temperature in kelvin unit = " +
+                      str(current_temperature) +
+                      "\n humidity (in percentage) = " +
+                      str(current_humidiy) +
+                      "\n description = " +
+                      str(weather_description))
+
+        elif "calculate" in query:
+
+            speak("calculating")
+            # write your wolframalpha app_id here 
+            app_id = "9U75J8-KGK7EKP3YT"
+            client = wolframalpha.Client(app_id)
+
+            indx = query.lower().split().index('calculate')
+            getinput = query.split()[indx + 1:]
+            res = client.query(' '.join(getinput))
+            answer = next(res.results).text
+            speak("The answer is " + answer)
+
+        elif 'ask' in query:
+            speak('I can answer to computational and geographical questions  and what question do you want to ask now')
+            question = takeCommand()
+            app_id = "9U75J8-KGK7EKP3YT"
+            client = wolframalpha.Client('R2K75H-7ELALHR35X')
+            res = client.query(question)
+            answer = next(res.results).text
+            speak(answer)
+            print(answer)
+
+        elif "roman number" in query:
+            def printRoman(number):
+                num = [1, 4, 5, 9, 10, 40, 50, 90,
+                       100, 400, 500, 900, 1000]
+                sym = ["I", "IV", "V", "IX", "X", "XL",
+                       "L", "XC", "C", "CD", "D", "CM", "M"]
+                i = 12
+                while number:
+                    div = number // num[i]
+                    number %= num[i]
+
+                    while div:
+                        print(sym[i], end="")
+                        div -= 1
+                    i -= 1
+
+
+            # Driver code 
+            if __name__ == "__main__":
+                number = int(input("Enter the number:\n"))
+                print("Roman numeral is:", end=" ")
+                printRoman(number)
+
+        elif 'lcm' in query:
+            a = int(input("Enter first number:\n"))
+            b = int(input("Enter second number:\n"))
+
+            maxNum = max(a, b)
+
+            while (True):
+                if (maxNum % a == 0 and maxNum % b == 0):
+                    break
+                maxNum = maxNum + 1
+
+            print(f
+            "The LCM of {a} and {b} is {maxNum}")
+            pyautogui.PAUSE = 6
+            speak("the lcm of {a} and {b} is {maxNum}")
+
+        elif 'clear the clutter' in query:
+            speak("clearing the clutter")
+            main.py = "G:\\main.py"
+            os.startfile(main.py)
 
         elif 'how are you' in query:
-            setMsgs = ['Just doing my thing!', 'I am fine!', 'Nice!']
-            ans_qus = random.choice(setMsgs)
-            speak(ans_qus)
-            speak(" How are you'")
-            ans_from_user_how_are_you = takeCommand()
-            if 'fine' in ans_from_user_how_are_you or 'happy' in ans_from_user_how_are_you or 'okey' in ans_from_user_how_are_you:
-                speak('Great')  
-            elif 'not' in ans_from_user_how_are_you or 'sad' in ans_from_user_how_are_you or 'upset' in ans_from_user_how_are_you:
-                speak('Tell me how can i make you happy')
-            else :
-                speak("I can't understand. Please say that again !")
+            print("I am fine sir!")
+            speak("i am fine sir")
 
-        else:
-            tempp = query.replace(' ','+')
-            prasun_url="https://www.google.com/search?q="    
-            res_prasun = 'sorry! i cant understand but i search from internet to give your answer !'
-            print(res_prasun)
-            speak(res_prasun)
-            webbrowser.open(prasun_url+tempp)
+        elif 'open workspace' in query:
+            speak("opening folder")
+            path_to_folder = "G:\\Program files"
+            os.startfile(path_to_folder)
+
+        elif "log off" in query or "sign out" in query:
+            speak("Ok , your pc will log off in 10 sec make sure you exit from all applications")
+            subprocess.call(["shutdown", "/l"])
+
+time.sleep(3)
