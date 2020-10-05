@@ -203,7 +203,7 @@ if __name__ == "__main__":
             time.sleep(5)
 
         elif "weather" in query:
-            api_key = "a0bfb859d9737f01f4e9d1606e26ec9a"
+            api_key = "a0bfb859d9737f01f4e9d1606e26ec9a" #your key
             base_url = "https://api.openweathermap.org/data/2.5/weather?"
             speak("what is the city name")
             city_name = takeCommand()
